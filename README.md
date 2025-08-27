@@ -1,70 +1,112 @@
-# Tank-Game
+# Java project - Game Tank
 
-This is a small game project write in Java ( JavaSwing )
+A classic tank battle game implemented in Java using Swing framework.
 
-![alt text](https://github.com/dodoproptit99/Tank-Game/blob/master/intro.png)
+![Game Screenshot](https://github.com/dodoproptit99/Tank-Game/blob/master/intro.png)
 
-## Requirements.
+## System Requirements
 
-* JDK8 trở lên
-* Netbean IDE
-* Cài java trong netbean
+- **Java Development Kit (JDK)**: Version 8 or higher
+- **IDE**: NetBeans IDE (recommended)
+- **Java Runtime**: Properly configured within NetBeans
 
-## Dành cho người chơi.
+## Getting Started
 
-Để chơi game, hãy vào file /src/main/Start.java và ấn run. 
+### For Players
 
-![alt_text](https://github.com/dodoproptit99/Tank-Game/blob/master/image/Screenshot%20from%202019-05-07%2021-20-00.png)
+To launch the game:
+1. Navigate to `/src/main/Start.java`
+2. Execute the file using the Run command
 
-Có 2 chế độ chơi, chơi một người và hai người.
+![Launch Screenshot](https://github.com/dodoproptit99/Tank-Game/blob/master/image/Screenshot%20from%202019-05-07%2021-20-00.png)
 
-Luật chơi rất đơn giản, hạ hết tank địch và bảo vệ thành trì trước khi bị giết để chiến thắng.
+### Game Modes
 
-## Dành cho người muốn phát triển game.
+- **Single Player**: Battle against AI-controlled tanks
+- **Two Player**: Local multiplayer mode
 
-#### 1. Đồ họa
+### Objective
 
-Mình làm như sau, lấy sẵn hình ảnh các chuyển động (4 hướng) của các tank, các hình ảnh về wall, river, base và để trong thư mục image. Khi run game, graphics sẽ liên tục vẽ lại các hình ảnh đó dựa vào FRESHTIME. FRESHTIME càng nhanh, tank di chuyển càng nhanh (tốc độ vẽ càng nhanh), và ngược lại.
+Eliminate all enemy tanks while protecting your base to achieve victory.
 
-Các file code đồ họa đều nằm trong thư mục frame. 
+## Development Guide
 
-Nhiệm vụ của các file này là tạo giao diện cho game, căn chỉnh cửa sổ game, các kích thước, tốc độ game. Chi tiết gồm có: nhận các KeyEvent (nhận nút từ bàn phím) và xử lí gọi các hàm di chuyển của từng đối tượng, draw ra màn hình. 
+### 1. Graphics System
 
-#### 2. Mô hình
+The graphics engine utilizes pre-rendered sprite images for tank animations, including movement in four directions. All visual assets (tanks, walls, rivers, base) are stored in the `/image` directory.
 
-Mình cấu hình từng đối tượng riêng trong game: Map, bullet, tank, boom, bot tank. Bot tank sẽ được kế thừa từ Tank.
+The rendering system continuously redraws sprites based on the `FRESHTIME` parameter:
+- **Higher FRESHTIME**: Faster tank movement and smoother animation
+- **Lower FRESHTIME**: Slower gameplay with reduced frame rate
 
-Về tank, các thông số như tốc độ đạn, số mạng, thời gian chờ sau mỗi lần bắn được setup trong phần này:
+All graphics-related code is located in the `/frame` directory, which handles:
+- Game interface creation and window management
+- Size and speed configuration
+- Keyboard input processing (`KeyEvent` handling)
+- Object movement function calls
+- Screen rendering operations
 
-``` java
-	private boolean attackCoolDown = true;// Attack cooling
-	private int attackCoolDownTime = 500;// Attack cooldown, milliseconds
+### 2. Game Model Architecture
 
-	protected boolean hasBullet;// Check whether the tank bullet exists and cannot continue to fire bullets when it exists.
+The game employs an object-oriented approach with distinct classes for each game entity:
 
-	private int life;
+- **Map**: Game environment and terrain
+- **Bullet**: Projectile mechanics
+- **Tank**: Player-controlled vehicles
+- **Boom**: Explosion effects
+- **Bot Tank**: AI-controlled enemies (inherits from Tank class)
+
+#### Tank Configuration
+
+Tank properties are configurable through the following parameters:
+
+```java
+private boolean attackCoolDown = true;        // Attack cooling mechanism
+private int attackCoolDownTime = 500;         // Attack cooldown in milliseconds
+protected boolean hasBullet;                  // Bullet existence check to prevent rapid fire
+private int life;                             // Tank health/lives
 ```
-Bot tank có một đặc điểm khác là tự động di chuyển theo hàm random:
 
-``` java
+#### AI Behavior
+
+Bot tanks feature autonomous movement using randomized direction selection:
+
+```java
 private Direction randomDirection() {
-		Direction[] dirs = Direction.values();//Get the enumeration value of the direction
-		Direction oldDir = dir;
-		Direction newDir = dirs[random.nextInt(4)];
-		if (oldDir == newDir || newDir == Direction.UP) {
-// If the original direction of the computer tank is the same as the random direction, or if the new direction of the computer tank is up, then re-randomly redirect the direction.
-			return dirs[random.nextInt(4)];
-		}
-		return newDir;
-	}
-  ```
-  
-  #### 3. Âm thanh
-  
-  Các file nhạc nền và âm thanh hiệu ứng được lưu trong phần audio. File ulti sẽ có nhiệm vụ đọc file ảnh và file nhạc vào game. 
-  
-  #### 4. Tổng kết
-  
-  Vì trong code mình có comment từng phần nên sẽ chỉ giới thiệu sơ qua về cấu trúc game. Các bạn đọc comment để hiểu rõ hơn từng phần nhé. 
-  
-Code được viết dựa trên sự hỗ trợ của một tài khoản Trung Quốc.
+    Direction[] dirs = Direction.values();    // Get direction enumeration values
+    Direction oldDir = dir;
+    Direction newDir = dirs[random.nextInt(4)];
+    
+    if (oldDir == newDir || newDir == Direction.UP) {
+        // Re-randomize if same direction or moving up
+        return dirs[random.nextInt(4)];
+    }
+    return newDir;
+}
+```
+
+### 3. Audio System
+
+Audio assets are organized in the `/audio` directory, containing:
+- Background music tracks
+- Sound effects for game events
+
+The utility classes handle loading and playing audio files during gameplay.
+
+### 4. Project Structure
+
+The codebase is thoroughly commented for educational purposes. Key components include:
+
+- **Graphics Layer**: Visual rendering and user interface
+- **Game Logic**: Core mechanics and rules
+- **Audio System**: Sound management
+- **Utility Classes**: Helper functions for asset loading
+
+## Contributing
+
+This project serves as a learning resource for Java game development. Feel free to explore the code comments for detailed implementation explanations.
+
+
+## License
+
+This project is available for educational and personal use.
